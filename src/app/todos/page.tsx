@@ -26,7 +26,7 @@ const Todos = async () => {
       </section>
 
       {allTodos.filter((todo) => !todo.completed).length > 0 && (
-        <section className="my-5">
+        <section className="my-10">
           <h2 className="text-2xl my-3 font-bold">Your Todos</h2>
           <ul className="flex flex-col gap-4">
             {allTodos
