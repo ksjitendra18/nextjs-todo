@@ -1,9 +1,9 @@
-name: Main Workflow
+name: Dev Workflow
 
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   build-and-deploy:
@@ -55,14 +55,15 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./.next/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:~/todo-app-dev/.next/
+
           ssh -o StrictHostKeyChecking=no "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" << 'EOF'
-            cd ~/nextjs-todo
+            cd ~/onlinecourseplatform
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             echo "Node version: $(node --version)"
             echo "NPM version: $(npm --version)"
-            git pull
+            git pull origin dev 
             pnpm install --frozen-lockfile
-            pnpm run build
-            pm2 restart nextjs-todo  
+            pm2 restart todo-app-dev  
           EOF
